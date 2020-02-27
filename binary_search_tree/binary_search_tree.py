@@ -82,13 +82,13 @@ class BinarySearchTree:
         cb(self.value)
 
         # If there's a value to the right
-        if self.right is not None:
+        if self.right:
 
             # Ram it through method again
             self.right.for_each(cb)
 
         # If there's a value to the left
-        if self.left is not None:
+        if self.left:
 
             # Ram it through method again
             self.left.for_each(cb)
