@@ -1,3 +1,6 @@
+from doubly_linked_list import DoublyLinkedList
+
+
 class LRUCache:
     """
     Our LRUCache class keeps track of the max number of nodes it
@@ -7,7 +10,9 @@ class LRUCache:
     to every node stored in the cache.
     """
     def __init__(self, limit=10):
-        pass
+        self.limit = limit
+        self.cache = DoublyLinkedList()
+        self.storage_dict = {}
 
     """
     Retrieves the value associated with the given key. Also
@@ -17,7 +22,32 @@ class LRUCache:
     key-value pair doesn't exist in the cache.
     """
     def get(self, key):
-        pass
+        # If storage contains the key
+        if key in self.storage_dict:
+
+            # Check cache by cycling through until we find a match
+            node = self.cache.head
+            while True:
+
+                # If node is None it means we've run through our entire cache
+                #  w/o finding a match, thus, it won't have a key or value
+                #  so we need to return None.
+                if node is None:
+                    return None
+
+                # If keys don't match, check next node
+                if node.key is not key:
+                    node = node.next
+
+                # Otherwise (keys match), break out of loop
+                else:
+                    break
+
+            self.cache.move_to_front(node)
+            return node.value
+
+        else:
+            return None
 
     """
     Adds the given key-value pair to the cache. The newly-
@@ -30,4 +60,24 @@ class LRUCache:
     the newly-specified value.
     """
     def set(self, key, value):
-        pass
+
+        if self.get(key) is not None:  # <- get method will move node to head of cache if exists
+
+            # Set new value for cache
+            self.cache.head.value = value
+
+            # Add to storage
+            self.storage_dict[key] = value
+
+            # Return so method doesn't continue further
+            return
+
+        # If cache is max capacity, remove oldest entry
+        if self.cache.length == self.limit:
+            self.cache.remove_from_tail()
+
+        # Add to cache
+        self.cache.add_to_head(key, value)
+
+        # Add to storage
+        self.storage_dict[key] = value
